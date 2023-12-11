@@ -9,6 +9,8 @@ import net.minecraft.text.ClickEvent;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+import net.minecraft.text.TextColor;
+import net.minecraft.util.Formatting;
 
 public class TextMarkdownVisitor extends AbstractVisitor {
     private final MutableText text;
@@ -43,8 +45,14 @@ public class TextMarkdownVisitor extends AbstractVisitor {
     
     @Override
     public void visit(Link node) {
-        currentStyle = currentStyle.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, node.getDestination()));
+        TextColor oldColor = currentStyle.getColor();
+
+        currentStyle = currentStyle
+                .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, node.getDestination()))
+                .withColor(0x8888FF);
+                
         visitChildren(node);
-        currentStyle = currentStyle.withClickEvent(null);
+
+        currentStyle = currentStyle.withClickEvent(null).withColor(oldColor);
     }
 }
