@@ -1,4 +1,4 @@
-package com.igrium.markchat;
+package com.igrium.markchat.chat;
 
 import net.fabricmc.api.ModInitializer;
 
