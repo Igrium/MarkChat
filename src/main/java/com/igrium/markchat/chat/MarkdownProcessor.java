@@ -1,4 +1,4 @@
-package com.igrium.markchat;
+package com.igrium.markchat.chat;
 
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
