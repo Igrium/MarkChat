@@ -4,6 +4,7 @@ import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 import org.jetbrains.annotations.Nullable;
 
+import com.igrium.markchat.config.MarkChatConfig;
 import com.igrium.markchat.formatting.TextMarkdownVisitor;
 import com.igrium.markchat.util.MarkdownProcessorProvider;
 
@@ -22,16 +23,16 @@ public class MarkdownProcessor implements MessageDecorator {
 
     @Override
     public Text decorate(@Nullable ServerPlayerEntity player, Text message) {
-        return processMarkdown(message.getString());
+        return processMarkdown(message.getString(), player.hasPermissionLevel(2));
     }
 
-    public Text processMarkdown(String message) {
+    public Text processMarkdown(String message, boolean admin) {
         Node document = parser.parse(message);
         // MutableText text = Text.empty();
 
         // TextMarkdownVisitor visitor = new TextMarkdownVisitor(text);
         // document.accept(visitor);
-        TextMarkdownVisitor visitor = new TextMarkdownVisitor();
+        TextMarkdownVisitor visitor = TextMarkdownVisitor.create(MarkChatConfig.getInstance(), admin, false);
         document.accept(visitor);
 
         return visitor.getPages().getFirst();

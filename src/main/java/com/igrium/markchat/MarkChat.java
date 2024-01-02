@@ -1,6 +1,7 @@
 package com.igrium.markchat;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.loader.api.FabricLoader;
 
 import java.io.BufferedReader;
@@ -11,6 +12,7 @@ import java.nio.file.Path;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.igrium.markchat.cmd.BookCommand;
 import com.igrium.markchat.config.MarkChatConfig;
 
 public class MarkChat implements ModInitializer {
@@ -35,6 +37,8 @@ public class MarkChat implements ModInitializer {
     public void onInitialize() {
         instance = this;
         initConfig();
+
+        CommandRegistrationCallback.EVENT.register(BookCommand::register);
     }
 
     private void initConfig() {

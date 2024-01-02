@@ -49,7 +49,7 @@ public class MarkChatConfig {
 
     private boolean enableBooks = true;
 
-    public boolean isEnableBooks() {
+    public boolean enableBooks() {
         return enableBooks;
     }
 
@@ -74,7 +74,17 @@ public class MarkChatConfig {
     }
 
     public void setFilebinUrl(URL filebinUrl) {
-        this.filebinUrl = filebinUrl;
+        this.filebinUrl = Objects.requireNonNull(filebinUrl);
+    }
+    
+    private String commandPrefix = "book";
+
+    public String getCommandPrefix() {
+        return commandPrefix;
+    }
+
+    public void setCommandPrefix(String commandPrefix) {
+        this.commandPrefix = Objects.requireNonNull(commandPrefix);
     }
 
     public void copyFrom(MarkChatConfig other) {

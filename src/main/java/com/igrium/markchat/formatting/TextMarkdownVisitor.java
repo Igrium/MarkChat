@@ -19,6 +19,7 @@ import org.commonmark.node.StrongEmphasis;
 import org.commonmark.node.ThematicBreak;
 
 import com.igrium.markchat.config.FormatSettings;
+import com.igrium.markchat.config.MarkChatConfig;
 import com.igrium.markchat.util.StringUtils;
 
 import net.minecraft.text.ClickEvent;
@@ -29,6 +30,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
 public class TextMarkdownVisitor extends AbstractVisitor {
+    
     private static class ListWriter {
         ListWriter(String prefix) {
             this.prefix = prefix;
@@ -56,7 +58,7 @@ public class TextMarkdownVisitor extends AbstractVisitor {
     private final StyleStack styles = new StyleStack();
     private Stack<ListWriter> lists = new Stack<>();
 
-    private boolean allowLinks = true;
+    private boolean allowLinks = false;
 
     public boolean allowLinks() {
         return allowLinks;
@@ -77,7 +79,7 @@ public class TextMarkdownVisitor extends AbstractVisitor {
         this.splitPages = splitPages;
     }
 
-    private int pageWidth;
+    private int pageWidth = 20;
 
     public int getPageWidth() {
         return pageWidth;
@@ -89,7 +91,7 @@ public class TextMarkdownVisitor extends AbstractVisitor {
         this.pageWidth = pageWidth;
     }
 
-    private int pageHeight;
+    private int pageHeight = 14;
 
     public int getPageHeight() {
         return pageHeight;
@@ -240,5 +242,25 @@ public class TextMarkdownVisitor extends AbstractVisitor {
 
     public LinkedList<MutableText> getPages() {
         return pages;
+    }
+
+    public static TextMarkdownVisitor create(MarkChatConfig config, boolean isAdmin, boolean splitPages) {
+        TextMarkdownVisitor visitor = new TextMarkdownVisitor();
+        switch (config.getAllowLinks()) {
+            case ALWAYS:
+                visitor.setAllowLinks(true);
+                break;
+            case ADMINS:
+                visitor.setAllowLinks(isAdmin);
+                break;
+            case NEVER:
+                visitor.setAllowLinks(false);
+                break;
+        }
+
+        visitor.setFormatSettings(config.getFormatting());
+        visitor.setSplitPages(splitPages);
+
+        return visitor;
     }
 }
