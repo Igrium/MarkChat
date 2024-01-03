@@ -18,13 +18,17 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.server.command.CommandManager.RegistrationEnvironment;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.ClickEvent;
+import net.minecraft.text.HoverEvent;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.server.command.ServerCommandSource;
 
 import static net.minecraft.server.command.CommandManager.*;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.UUID;
 
 public class BookCommand {
 
@@ -36,7 +40,11 @@ public class BookCommand {
         if (!MarkChatConfig.getInstance().enableBooks()) return;
 
         dispatcher.register(literal(MarkChatConfig.getInstance().getCommandPrefix()).then(
-            literal("create").then(
+            literal("upload").then(
+                argument("title", StringArgumentType.greedyString()).executes(BookCommand::prompt)
+            )
+        ).then(
+            literal("download").then(
                 argument("title", StringArgumentType.string()).then(
                     literal("url").then(
                         argument("url", StringArgumentType.string()).executes(BookCommand::createWithUrl)
@@ -102,7 +110,40 @@ public class BookCommand {
 
         return 1;
     }
-    
+
+    private static int prompt(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+        String title = StringArgumentType.getString(context, "title");
+
+        UUID uuid = UUID.randomUUID();
+        String uploadUrl = MarkChat.getInstance().getFilebin().getBin(uuid.toString()).toString();
+
+        Text msg = Text.literal("Click ")
+                .append(createUploadLink("this link", uploadUrl, "Click to open."))
+                .append(" and upload your text file. ")
+                .append("\n")
+                .append("Once you've uploaded the file, hold a book and quill and click ")
+                .append(createConfirmLink("here.", uuid.toString(), title, "Click to confirm upload."));
+        
+        context.getSource().sendFeedback(() -> msg, false);
+        return 1;
+    }
+
+    private static Text createUploadLink(String text, String url, String hover) {
+        return Text.literal(text).styled(style -> style
+                .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, url))
+                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.literal(hover))))
+                .formatted(Formatting.GREEN);
+
+    }
+
+    private static Text createConfirmLink(String text, String id, String title, String hover) {
+        return Text.literal(text).styled(style -> style
+                .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
+                        "/book download \"%s\" filebin \"%s\"".formatted(title, id)))
+                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.literal(hover))))
+                .formatted(Formatting.GREEN);
+    }
+
     private static boolean requireWritableBook(ServerCommandSource source) {
         return MarkChatConfig.getInstance().isRequireWritableBook();
     }
