@@ -1,9 +1,8 @@
 package com.igrium.markchat.config;
 
 import java.io.Reader;
-import java.net.MalformedURLException;
-
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Objects;
 
 import com.google.gson.Gson;
@@ -67,13 +66,13 @@ public class MarkChatConfig {
         this.requireWritableBook = requireWritableBook;
     }
 
-    private URL filebinUrl = getUrlUnchecked("https://filebin.net");
+    private URI filebinUrl = getUrlUnchecked("https://filebin.net");
 
-    public URL getFilebinUrl() {
+    public URI getFilebinUrl() {
         return filebinUrl;
     }
 
-    public void setFilebinUrl(URL filebinUrl) {
+    public void setFilebinUrl(URI filebinUrl) {
         this.filebinUrl = Objects.requireNonNull(filebinUrl);
     }
     
@@ -115,10 +114,10 @@ public class MarkChatConfig {
         return GSON.fromJson(reader, MarkChatConfig.class);
     }
 
-    private static URL getUrlUnchecked(String url) {
+    private static URI getUrlUnchecked(String url) {
         try {
-            return new URL(url);
-        } catch (MalformedURLException e) {
+            return new URI(url);
+        } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
     }

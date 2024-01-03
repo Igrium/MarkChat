@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import com.igrium.markchat.cmd.BookCommand;
 import com.igrium.markchat.config.MarkChatConfig;
+import com.igrium.markchat.filebin.FilebinApi;
 
 public class MarkChat implements ModInitializer {
     // This logger is used to write text to the console and the log file.
@@ -33,10 +34,17 @@ public class MarkChat implements ModInitializer {
         return config;
     }
 
+    private FilebinApi filebin;
+
+    public FilebinApi getFilebin() {
+        return filebin;
+    }
+
     @Override
     public void onInitialize() {
         instance = this;
         initConfig();
+        filebin = new FilebinApi(config.getFilebinUrl());
 
         CommandRegistrationCallback.EVENT.register(BookCommand::register);
     }

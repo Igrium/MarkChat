@@ -3,6 +3,7 @@ package com.igrium.markchat.cmd;
 import com.igrium.markchat.MarkChat;
 import com.igrium.markchat.book.BookGenerator;
 import com.igrium.markchat.book.BookLoader;
+import com.igrium.markchat.book.FilebinBookLoader;
 import com.igrium.markchat.book.URLBookLoader;
 import com.igrium.markchat.config.MarkChatConfig;
 import com.igrium.markchat.formatting.TextMarkdownVisitor;
@@ -40,9 +41,18 @@ public class BookCommand {
                     literal("url").then(
                         argument("url", StringArgumentType.string()).executes(BookCommand::createWithUrl)
                     )
+                ).then(
+                    literal("filebin").then(
+                        argument("binId", StringArgumentType.string()).executes(BookCommand::createWithFilebin)
+                    )
                 )
             )
         ));
+    }
+
+    public static int createWithFilebin(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+        String binId = StringArgumentType.getString(context, "binId");
+        return create(context, new FilebinBookLoader(binId, MarkChat.getInstance().getFilebin()));
     }
 
     public static int createWithUrl(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
