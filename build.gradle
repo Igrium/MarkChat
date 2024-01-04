@@ -24,7 +24,6 @@ loom {
 	mods {
 		"markchat" {
 			sourceSet sourceSets.main
-			sourceSet sourceSets.client
 		}
 	}
 
